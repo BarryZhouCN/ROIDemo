@@ -1,0 +1,138 @@
+﻿<UserControl
+  x:Class="WPFAdorner.Views.UserControls.ImageUserControl"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:adorners="clr-namespace:WPFAdorner.Views.Adorners"
+  xmlns:converters="clr-namespace:WPFAdorner.Converters"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:WPFAdorner.Views.UserControls"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  d:DesignHeight="450"
+  d:DesignWidth="800"
+  MouseMove="ImageUserControl_OnMouseMove"
+  SizeChanged="ImageUserControl_OnSizeChanged"
+  mc:Ignorable="d">
+  <Grid>
+    <!-->背景图</-->
+    <Image Name="Part_Background" />
+    <!-->图片控件</-->
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+      <ContentControl
+        Name="Part_ImageContainer"
+        ClipToBounds="True"
+        MouseWheel="Part_ImageContainer_OnMouseWheel">
+        <Image
+          Name="Part_Image"
+          MouseLeftButtonDown="Part_ImageContainer_OnMouseLeftButtonDown"
+          MouseLeftButtonUp="Part_ImageContainer_OnMouseLeftButtonUp"
+          MouseMove="Part_ImageContainer_OnMouseMove"
+          RenderOptions.BitmapScalingMode="NearestNeighbor"
+          SizeChanged="Part_Image_OnSizeChanged"
+          Source="{Binding RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType=UserControl}, Path=ImageSource}"
+          Stretch="None">
+          <Image.RenderTransform>
+            <TransformGroup>
+              <ScaleTransform x:Name="scaler" />
+              <TranslateTransform x:Name="transer" />
+            </TransformGroup>
+
+          </Image.RenderTransform>
+        </Image>
+
+      </ContentControl>
+    </ScrollViewer>
+    <!-->工具栏</-->
+    <StackPanel
+      HorizontalAlignment="Left"
+      VerticalAlignment="Top"
+      Background="Black"
+      Opacity="0.5"
+      Orientation="Vertical">
+      <TextBlock Foreground="#90EE90" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType=UserControl}, Path=Scale, StringFormat=缩放比例:{0:P1}}" />
+      <TextBlock Foreground="#90EE90" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType=UserControl}, Path=CurrentPoint, Converter={converters:PointToStringConverter}}" />
+    </StackPanel>
+
+    <ListView
+      HorizontalAlignment="Right"
+      VerticalAlignment="Top"
+      BorderThickness="0"
+      SelectionMode="Single"
+      Background="Black"
+      ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType=UserControl}, Path=Adorners}"
+      Opacity="0.5">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="30"></ColumnDefinition>
+              <ColumnDefinition Width="300"></ColumnDefinition>
+              <ColumnDefinition Width="24"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center" Margin="6,0,0,0" Text="{Binding Name}" />
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="6,0,0,0" Text="{Binding Description}" />
+            <Button Grid.Column="2"
+              Width="16"
+              Height="16"
+              VerticalAlignment="Center"
+              Margin="6,0,0,0"
+              IsEnabled="{Binding IsSelected}"
+              Click="ButtonBase_OnClick">
+              <Button.Style>
+                <Style TargetType="Button">
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="Button">
+                        <Border BorderThickness="0">
+                          <Path
+                            x:Name="delete"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Stretch="Uniform"
+                            Data="M983.818467 313.316428a511.938785 511.938785 0 1 0 40.140818 198.697048 508.641504 508.641504 0 0 0-40.140818-198.697048z m-248.729709 421.478586a31.825934 31.825934 0 0 1-44.8717 1.29024L510.013459 555.881655 329.80986 735.941894A32.686094 32.686094 0 0 1 283.647919 689.779954l180.2036-180.060239-180.2036-180.203599a32.686094 32.686094 0 0 1 46.161941-46.161941l180.203599 180.2036 180.203599-180.34696a32.686094 32.686094 0 0 1 46.16194 46.16194L556.175399 509.719715l180.203599 180.203599a31.825934 31.825934 0 0 1-1.29024 44.8717z m0 0"
+                            Fill="#1afa29"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                          <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="delete" Property="Opacity" Value="1"></Setter>
+                          </Trigger>
+                          <Trigger Property="IsMouseOver" Value="False">
+                            <Setter TargetName="delete" Property="Opacity" Value="0.5"></Setter>
+                          </Trigger>
+                        </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </Button.Style>
+            </Button>
+          </Grid>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+      <ListView.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+          <Setter Property="FocusVisualStyle" Value="{x:Null}"></Setter>
+          <Setter Property="Height" Value="20"></Setter>
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate TargetType="ListBoxItem">
+                <Border BorderThickness="0">
+                  <ContentPresenter></ContentPresenter>
+                </Border>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+          <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter Property="Foreground" Value="#0BEB0B" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="False">
+              <Setter Property="Foreground" Value="#FFA4F0A4" />
+            </Trigger>
+          </Style.Triggers>
+        </Style>
+      </ListView.ItemContainerStyle>
+
+    </ListView>
+  </Grid>
+</UserControl>
